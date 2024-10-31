@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+  <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Produtos</title>
+    <script src="script.js" defer></script>
+
+  </head>
+
+  <body>
+
+    <h1>CRUD de Produtos</h1>
+    
+    <h2>Criar Produto</h2>
+    <input type="text" id="productName" placeholder="Nome do Produto">
+    <input type="number" id="productPrice" placeholder="Preço">
+    <input type="text" id="productDescription" placeholder="Descrição">
+    <button onclick="createProduct()">Criar Produto</button>
+
+    <h2>Todos os Produtos</h2>
+    <ul id="productList"></ul>
+
+    <h2>Excluir Produto</h2>
+    <input type="number" id="productIdToDelete" placeholder="ID do Produto">
+    <button onclick="deleteProduct()">Excluir Produto</button>
+
+  </body>
+  
+</html>
