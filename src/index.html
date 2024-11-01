@@ -8,36 +8,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD de Produtos</title>
     <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
 
   </head>
 
   <body>
-
     <h1>CRUD de Produtos</h1>
-    
-    <h2>Criar Produto</h2>
-    <input type="text" id="productName" placeholder="Nome do Produto">
-    <input type="number" id="productPrice" placeholder="Preço">
-    <input type="text" id="productDescription" placeholder="Descrição">
-    <button onclick="createProduct()">Criar Produto</button>
+
+    <div class="container">
+        <div class="section">
+            <h2>Criar Produto</h2>
+            <input type="text" id="productName" placeholder="Nome do Produto">
+            <input type="number" id="productPrice" placeholder="Preço">
+            <input type="text" id="productDescription" placeholder="Descrição">
+            <button onclick="createProduct()">Criar Produto</button>
+        </div>
+
+        <div class="section">
+            <h2>Alterar Produto</h2>
+            <input type="number" id="productIdToUpdate" placeholder="ID do Produto">
+            <input type="text" id="newProductName" placeholder="Novo Nome do Produto">
+            <input type="number" id="newProductPrice" placeholder="Novo Preço">
+            <input type="text" id="newProductDescription" placeholder="Nova Descrição">
+            <button onclick="updateProduct()">Alterar Produto</button>
+        </div>
+
+        <div class="section">
+            <h2>Excluir Produto</h2>
+            <input type="number" id="productIdToDelete" placeholder="ID do Produto">
+            <button onclick="deleteProduct()">Excluir Produto</button>
+        </div>
+    </div>
 
     <h2>Todos os Produtos</h2>
     <ul id="productList"></ul>
 
-    <h2>Alterar Produto</h2>
-    <input type="number" id="productIdToUpdate" placeholder="ID do Produto">
-    <input type="text" id="newProductName" placeholder="Novo Nome do Produto">
-    <input type="number" id="newProductPrice" placeholder="Novo Preço">
-    <input type="text" id="newProductDescription" placeholder="Nova Descrição">
-    <button onclick="updateProduct()">Alterar Produto</button>
-
-    <h2>Excluir Produto</h2>
-    <input type="number" id="productIdToDelete" placeholder="ID do Produto">
-    <button onclick="deleteProduct()">Excluir Produto</button>
-
     <h3>Sincronizar Redis com o Banco de Dados</h3>
     <button id="syncButton">Sincronizar</button>
+</body>
 
-  </body>
   
 </html>

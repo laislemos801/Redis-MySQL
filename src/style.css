@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+/* Agora você pode usar a fonte em seu CSS */
+body {
+    font-family: 'Poppins', sans-serif;
+}
+/* Estilo geral */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Estilo para os títulos */
+h1, h2, h3 {
+    color: #507572;
+    text-align: center;
+}
+
+/* Estilo para a área em colunas */
+.container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+/* Cada coluna */
+.section {
+    flex: 1;
+    background-color: #ececec;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Permite que os elementos fiquem em uma coluna */
+    align-items: center;    /* Centraliza os elementos horizontalmente */
+}
+
+/* Estilo para inputs */
+input[type="text"],
+input[type="number"] {
+    display: flex;
+    justify-content:center;
+    padding: 10px;
+    margin: 5px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    font-family: 'Poppins', sans-serif; /* Remove o contorno padrão */
+}
+
+/* Hover nos inputs */
+input[type="text"]:hover,
+input[type="number"]:hover {
+    border-color: #B5C5AE; /* Cor da borda ao passar o mouse */
+   
+}
+
+/* Estilo para botões */
+button {
+    background-color: #B5C5AE;
+    color: #fff;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif; 
+}
+
+button:hover {
+    background-color: #E9EDC9;
+    color: #333;
+    font-family: 'Poppins', sans-serif; 
+}
+
+/* Sincronização */
+#syncButton {
+    background-color: #507572;
+    margin-top: 15px;
+    
+    font-family: 'Poppins', sans-serif; 
+}
