@@ -9,6 +9,7 @@ redisClient.connect();
 
 export class ProductsRepository {
   constructor() {
+    
     console.log("Inicializando ProductsRepository...");
     // Carregar cache no Redis quando o servidor inicia
     this.loadCache();
@@ -81,36 +82,40 @@ export class ProductsRepository {
   async create(p: Product): Promise<Product> {
     console.log("Tentando inserir produto:", p);
     return new Promise((resolve, reject) => {
-      conn.query<ResultSetHeader>(
-        "INSERT INTO PRODUCTS (NAME, PRICE, DESCRIPTION) VALUES(?,?,?)",
-        [p.name, p.price, p.description],
-        async (err, res) => {
-          if (err) {
-            console.error("Erro ao inserir produto:", err);
-            reject(err);
-          } else {
-            console.log("Produto inserido com sucesso, ID:", res.insertId);
-            try {
-              const product = await this.getById(res.insertId);
-              console.log("Produto recuperado do banco de dados:", product);
+        conn.query<ResultSetHeader>(
+            "INSERT INTO PRODUCTS (NAME, PRICE, DESCRIPTION) VALUES(?,?,?)",
+            [p.name, p.price, p.description],
+            async (err, res) => {
+                if (err) {
+                    console.error("Erro ao inserir produto:", err);
+                    reject(err);
+                } else {
+                    console.log("Produto inserido com sucesso, ID:", res.insertId);
+                    try {
+                        const product = await this.getById(res.insertId);
+                        console.log("Produto recuperado do banco de dados:", product);
 
-              if (product) {
-                await redisClient.hSet(`product:${product.ID}`, {
-                  id: product.ID.toString(),
-                  name: product.NAME,
-                  price: product.PRICE,
-                  description: product.DESCRIPTION,
-                });
-                console.log("Produto adicionado ao Redis com chave:", `product:${product.ID}`, "com dados:", product);
-              }
-              resolve(product!);
-            } catch (error) {
-              console.error("Erro ao recuperar produto após inserção:", error);
-              reject(error);
+                        // Verificação para garantir que `product` não é undefined
+                        if (product && product.ID) {
+                            await redisClient.hSet(`product:${product.ID}`, {
+                                id: product.ID.toString(),
+                                name: product.NAME,
+                                price: product.PRICE,
+                                description: product.DESCRIPTION,
+                            });
+                            console.log("Produto adicionado ao Redis com chave:", `product:${product.ID}`, "com dados:", product);
+                            resolve(product);
+                        } else {
+                            console.error(`Produto com ID ${res.insertId} não encontrado após inserção.`);
+                            reject(new Error(`Produto com ID ${res.insertId} não encontrado após inserção.`));
+                        }
+                    } catch (error) {
+                        console.error("Erro ao recuperar produto após inserção:", error);
+                        reject(error);
+                    }
+                }
             }
-          }
-        }
-      );
+        );
     });
   }
 
