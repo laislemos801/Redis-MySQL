@@ -1,11 +1,25 @@
 const apiUrl = 'http://localhost:3000/api';
 
+document.getElementById('syncButton').addEventListener('click', async () => {
+    try {
+        const response = await fetch('http://127.0.0.1:3000/api/sync', { method: 'GET' });
+
+        if (!response.ok) throw new Error('Erro ao sincronizar');
+        const data = await response.json();
+        alert(data.message);  // Mostra a mensagem de sucesso
+        fetchProducts();
+    } catch (error) {
+        console.error("Erro durante a sincronização:", error);
+        alert("Ocorreu um erro durante a sincronização. Confira o console para mais detalhes.");
+    }
+});
+
 async function createProduct() {
     const name = document.getElementById('productName').value;
     const price = document.getElementById('productPrice').value;
     const description = document.getElementById('productDescription').value;
 
-    const response = await fetch(`${apiUrl}/addProduct`, {
+    const response = await fetch(`http://127.0.0.1:3000/api/addProduct`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -15,6 +29,9 @@ async function createProduct() {
 
     if (response.ok) {
         alert('Produto criado com sucesso!');
+        document.getElementById('productName').value = '';
+        document.getElementById('productPrice').value = '';
+        document.getElementById('productDescription').value = '';
         fetchProducts(); // Atualiza a lista de produtos
     } else {
         alert('Erro ao criar produto.');
@@ -22,7 +39,7 @@ async function createProduct() {
 }
 
 async function fetchProducts() {
-    const response = await fetch(`${apiUrl}/getAllProducts`);
+    const response = await fetch(`http://127.0.0.1:3000/api/getAllProducts`);
     const products = await response.json();
 
     const productList = document.getElementById('productList');
@@ -44,7 +61,7 @@ async function deleteProduct() {
     }
 
     try {
-        const response = await fetch(`${apiUrl}/deleteProduct/${productId}`, {
+        const response = await fetch(`http://127.0.0.1:3000/api/deleteProduct/${productId}`, {
             method: 'DELETE',
         });
 
@@ -76,7 +93,7 @@ async function updateProduct() {
     }
 
     try {
-        const response = await fetch(`${apiUrl}/updateProduct/${id}`, {
+        const response = await fetch(`http://127.0.0.1:3000/api/updateProduct/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

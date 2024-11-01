@@ -198,4 +198,36 @@ export class ProductsRepository {
       );
     });
   }
+
+  async syncRedisWithDatabase(): Promise<void> { // Transformado em método da classe
+    console.log("Sincronizando Redis com o banco de dados...");
+    const products = await this.getAll(); // Obtém todos os produtos do banco de dados
+
+    // Armazenar IDs de produtos que existem no banco de dados
+    const existingProductIds = new Set(products.map(product => product.ID));
+
+    // Atualizar o Redis com produtos existentes
+    for (const product of products) {
+      await redisClient.hSet(`product:${product.ID}`, {
+        id: product.ID.toString(),
+        name: product.NAME,
+        price: product.PRICE.toString(),
+        description: product.DESCRIPTION,
+      });
+      console.log(`Produto ${product.ID} sincronizado no cache Redis.`);
+    }
+
+    // Obter todos os IDs dos produtos armazenados no Redis
+    const redisKeys = await redisClient.keys('product:*');
+    for (const key of redisKeys) {
+      const productId = key.split(':')[1]; // Extrai o ID do produto da chave
+      // Se o ID do produto não está mais no banco de dados, removê-lo do Redis
+      if (!existingProductIds.has(parseInt(productId))) {
+        await redisClient.del(key);
+        console.log(`Produto ${productId} removido do cache Redis.`);
+      }
+    }
+
+    console.log("Sincronização concluída.");
+  }
 }

@@ -32,4 +32,4 @@ INSERT INTO products (
 );
 
 CREATE USER IF NOT EXISTS 'grupo3' IDENTIFIED BY '123';
-GRANT ALL ON mini_projeto_ebd2.* TO 'grupo3';*/
+GRANT ALL ON mini_projeto_ebd2.* TO 'grupo3';

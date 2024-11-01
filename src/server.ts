@@ -54,6 +54,17 @@ routes.put('/updateProduct/:ID', async (req: Request, res: Response) => {
     }
 });
 
+// Rota para sincronização
+routes.get('/sync', async (req: Request, res: Response) => {
+    try {
+        await productsRepo.syncRedisWithDatabase(); // Chama a função de sincronização
+        res.status(200).json({ message: 'Sincronização concluída com sucesso' });
+    } catch (error) {
+        console.error("Erro durante a sincronização:", error);
+        res.status(500).json({ error: 'Erro ao sincronizar os dados' });
+    }
+});
+
 
 // Aplicar as rotas na aplicação web backend
 app.use('/api', routes);
