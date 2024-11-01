@@ -52,32 +52,38 @@ export class ProductsRepository {
   async getById(product_id: number): Promise<Product | undefined> {
     const cachedProduct = await redisClient.hGetAll(`product:${product_id}`);
     if (Object.keys(cachedProduct).length) {
-      return cachedProduct as Product; // Retorna o produto do cache
+        // Converta os valores de string de volta para um objeto Product
+        return {
+            ID: parseInt(cachedProduct.id),
+            NAME: cachedProduct.name,
+            PRICE: parseFloat(cachedProduct.price),
+            DESCRIPTION: cachedProduct.description,
+        } as Product; // Retorna o produto do cache
     } else {
-      // Busca no banco e armazena no cache
-      return new Promise((resolve, reject) => {
-        conn.query<Product[]>(
-          "SELECT * FROM PRODUCTS WHERE ID = ?",
-          [product_id],
-          (err, res) => {
-            if (err) reject(err);
-            else {
-              const product = res?.[0];
-              if (product) {
-                redisClient.hSet(`product:${product.ID}`, {
-                  id: product.ID.toString(),
-                  name: product.NAME,
-                  price: product.PRICE,
-                  description: product.DESCRIPTION,
-                }); // Armazena no Redis
-              }
-              resolve(product);
-            }
-          }
-        );
-      });
+        // Busca no banco e armazena no cache
+        return new Promise((resolve, reject) => {
+            conn.query<Product[]>(
+                "SELECT * FROM PRODUCTS WHERE ID = ?",
+                [product_id],
+                (err, res) => {
+                    if (err) reject(err);
+                    else {
+                        const product = res?.[0];
+                        if (product) {
+                            redisClient.hSet(`product:${product.ID}`, {
+                                id: product.ID.toString(),
+                                name: product.NAME,
+                                price: product.PRICE.toString(), // Certifique-se de que o preço é uma string
+                                description: product.DESCRIPTION,
+                            }); // Armazena no Redis
+                        }
+                        resolve(product);
+                    }
+                }
+            );
+        });
     }
-  }
+}
 
   async create(p: Product): Promise<Product> {
     console.log("Tentando inserir produto:", p);
@@ -119,32 +125,56 @@ export class ProductsRepository {
     });
   }
 
-  async update(p: Product): Promise<Product | undefined> {
-    console.log("Tentando atualizar produto:", p);
+  async update(id: number, data: Partial<Product>): Promise<Product | undefined> {
+    console.log("Tentando atualizar produto com ID:", id, "Novos dados:", data);
+
+    // Se não houver campos para atualizar, rejeitar a operação.
+    if (!data.name && !data.price && !data.description) {
+        throw new Error("Pelo menos um campo deve ser fornecido para atualização.");
+    }
+
     return new Promise((resolve, reject) => {
-      conn.query<ResultSetHeader>(
-        "UPDATE PRODUCTS SET NAME = ?, PRICE = ?, DESCRIPTION = ? WHERE ID = ?",
-        [p.name, p.price, p.description, p.id],
-        async (err, res) => {
-          if (err) {
-            console.error("Erro ao atualizar produto:", err);
-            reject(err);
-          } else {
-            console.log(`Produto com ID ${p.id} atualizado com sucesso.`);
-            const product = await this.getById(p.id!);
-            if (product) {
-              redisClient.hSet(`product:${product.ID}`, {
-                id: product.ID.toString(),
-                name: product.NAME,
-                price: product.PRICE,
-                description: product.DESCRIPTION,
-              });
-              console.log(`Produto ${product.ID} atualizado no cache Redis.`);
-            }
-            resolve(product);
-          }
+        // Construir a query dinâmica com os campos que foram fornecidos
+        const updates: string[] = [];
+        const values: (string | number)[] = [];
+
+        if (data.name) {
+            updates.push("NAME = ?");
+            values.push(data.name);
         }
-      );
+        if (data.price) {
+            updates.push("PRICE = ?");
+            values.push(data.price);
+        }
+        if (data.description) {
+            updates.push("DESCRIPTION = ?");
+            values.push(data.description);
+        }
+        
+        // Adicionar o ID no final da lista de valores
+        values.push(id);
+
+        const query = `UPDATE PRODUCTS SET ${updates.join(", ")} WHERE ID = ?`;
+
+        conn.query<ResultSetHeader>(query, values, async (err, res) => {
+            if (err) {
+                console.error("Erro ao atualizar produto:", err);
+                reject(err);
+            } else {
+                console.log(`Produto com ID ${id} atualizado com sucesso.`);
+                const product = await this.getById(id); // Usar o ID diretamente
+                if (product) {
+                    redisClient.hSet(`product:${product.ID}`, {
+                        id: product.ID.toString(),
+                        name: product.NAME,
+                        price: product.PRICE,
+                        description: product.DESCRIPTION,
+                    });
+                    console.log(`Produto ${product.ID} atualizado no cache Redis.`);
+                }
+                resolve(product);
+            }
+        });
     });
   }
 

@@ -1,7 +1,6 @@
-import express from "express";
 import { ProductsRepository } from "./ProductsRepository";
 import cors from 'cors';
-import { Request, Response, Router } from "express";
+import express, { Request, Response, Router } from 'express';
 
 const app = express();
 const port = 3000;
@@ -32,24 +31,29 @@ routes.post('/addProduct', async (req: Request, res: Response) => {
     }
 });
 
-// Rota para deletar produto
-//routes.delete('/deleteProduct/:ID', async (req: Request, res: Response) => {
-    //const productId = parseInt(req.params.ID, 10); // Corrigido para acessar o parâmetro corretamente
-    //if (isNaN(productId)) {
-        //return res.status(400).json({ message: 'ID do produto inválido.' });
-    //}
+routes.delete('/deleteProduct/:ID', async (req: Request, res: Response) => {
+    const productId = parseInt(req.params.ID, 10);
+    
+    try {
+        await productsRepo.delete(productId);
+        res.status(200).json({ message: 'Item deletado com sucesso' });
+      } catch (error) {
+        res.status(500).json({ error: 'Erro ao deletar o item' });
+      }
+});
 
-    //try {
-       // const result = await productsRepo.delete(productId);
-        //if (result === 0) {
-            //return res.status(404).json({ message: 'Produto não encontrado.' });
-        //}
-       // res.status(204).send(); // Deletado com sucesso
-    //} catch (error) {
-       // console.error("Erro ao deletar produto:", error);
-       // res.status(500).json({ message: 'Erro ao deletar produto.' });
-   // }
-//});
+routes.put('/updateProduct/:ID', async (req: Request, res: Response) => {
+    const productId = parseInt(req.params.ID, 10);
+    const productData = req.body; // Supondo que os novos dados venham no corpo da requisição
+
+    try {
+        await productsRepo.update(productId, productData); // Você precisa implementar o método update no seu repositório
+        res.status(200).json({ message: 'Produto atualizado com sucesso' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao atualizar o produto' });
+    }
+});
+
 
 // Aplicar as rotas na aplicação web backend
 app.use('/api', routes);

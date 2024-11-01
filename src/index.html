@@ -24,6 +24,13 @@
     <h2>Todos os Produtos</h2>
     <ul id="productList"></ul>
 
+    <h2>Alterar Produto</h2>
+    <input type="number" id="productIdToUpdate" placeholder="ID do Produto">
+    <input type="text" id="newProductName" placeholder="Novo Nome do Produto">
+    <input type="number" id="newProductPrice" placeholder="Novo Preço">
+    <input type="text" id="newProductDescription" placeholder="Nova Descrição">
+    <button onclick="updateProduct()">Alterar Produto</button>
+
     <h2>Excluir Produto</h2>
     <input type="number" id="productIdToDelete" placeholder="ID do Produto">
     <button onclick="deleteProduct()">Excluir Produto</button>
