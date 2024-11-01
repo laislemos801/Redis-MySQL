@@ -23,9 +23,22 @@ document.getElementById('syncButton').addEventListener('click', async () => {
 // Função para criar um novo produto
 async function createProduct() {
     // Obtém os valores dos campos de entrada
-    const name = document.getElementById('productName').value;
-    const price = document.getElementById('productPrice').value;
-    const description = document.getElementById('productDescription').value;
+    const name = document.getElementById('productName').value.trim();
+    const price = document.getElementById('productPrice').value.trim();
+    const description = document.getElementById('productDescription').value.trim();
+
+    // Valida os campos de entrada
+    if (!name || !price || !description) {
+        alert('Por favor, preencha todos os campos.'); // Mensagem de erro
+        return;
+    }
+
+    // Verifica se o preço é um número válido
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
+        alert('Por favor, insira um preço válido.'); // Mensagem de erro para preço inválido
+        return;
+    }
 
     // Faz uma requisição POST para adicionar o produto
     const response = await fetch(`http://127.0.0.1:3000/api/addProduct`, {
@@ -62,10 +75,21 @@ async function fetchProducts() {
     // Itera sobre os produtos e os adiciona à lista
     products.forEach(product => {
         const li = document.createElement('li'); // Cria um novo elemento de lista
-        // Define o texto do elemento de lista com os detalhes do produto
-        li.textContent = `ID: ${product.ID}, Nome: ${product.NAME}, Preço: R$ ${product.PRICE}, Descrição: ${product.DESCRIPTION}`;
-        productList.appendChild(li); // Adiciona o elemento à lista
-    });
+    
+        // Adiciona uma classe para estilização do item de lista
+        li.classList.add('product-item');
+    
+        // Define o conteúdo do elemento em uma linha
+        li.innerHTML = `
+            <span><strong>ID:</strong> ${product.ID}</span> | 
+            <span><strong>Nome:</strong> ${product.NAME}</span> | 
+            <span><strong>Preço:</strong> R$ ${product.PRICE}</span> | 
+            <span><strong>Descrição:</strong> ${product.DESCRIPTION}</span>
+        `;
+    
+        // Adiciona o item à lista
+        productList.appendChild(li);
+    });    
 }
 
 // Função para excluir um produto
@@ -89,8 +113,6 @@ async function deleteProduct() {
             alert('Produto excluído com sucesso!'); // Mensagem de sucesso
             fetchProducts(); // Atualiza a lista de produtos
             document.getElementById('productIdToDelete').value = ''; // Limpa o campo de entrada
-        } else if (response.status === 404) { 
-            alert('Produto não encontrado.'); // Mensagem de erro se o produto não for encontrado
         } else {
             const errorData = await response.json(); // Converte a resposta de erro em JSON
             alert(`Erro ao excluir produto: ${errorData.message || 'Erro desconhecido.'}`); // Mensagem de erro
@@ -139,6 +161,8 @@ async function updateProduct() {
             document.getElementById('newProductName').value = '';
             document.getElementById('newProductPrice').value = '';
             document.getElementById('newProductDescription').value = '';
+        } else if (response.status === 404) {
+            alert('Erro: Produto não encontrado.');
         } else {
             const errorData = await response.json(); // Converte a resposta de erro em JSON
             alert(`Erro ao alterar produto: ${errorData.message || 'Erro desconhecido.'}`); // Mensagem de erro

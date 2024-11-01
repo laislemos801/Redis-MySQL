@@ -94,3 +94,46 @@ button:hover {
     
     font-family: 'Poppins', sans-serif; 
 }
+
+/* Estilo para o contêiner da lista de produtos */
+#productList {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Estilo para cada item de produto */
+.product-item {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 0.9em;
+    color: #474951;
+    width: 1100px; /* Largura fixa para cada item */
+    overflow-wrap: break-word; /* Quebra o texto se necessário */
+    word-wrap: break-word;
+}
+
+.product-item:hover {
+    transform: scale(1.02);
+}
+
+/* Estilo para os detalhes do produto */
+.product-content h3.product-name {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.product-content p {
+    margin: 5px 0;
+    color: #555;
+}
+
+/* Estilo para diferenciar o preço */
+.product-price {
+    font-weight: bold;
+    color: #2a9d8f;
+}
+

@@ -79,5 +79,5 @@ app.use('/api', routes);
 
 // Inicia o servidor e escuta na porta definida
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`); // Log de inicialização do servidor
+    console.log(`Server is running on http://localhost:${port}`); 
 });
